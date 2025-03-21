@@ -1,0 +1,13 @@
+.about-us-page {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .about-us-page h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .about-us-page p {
+    font-size: 1.2rem;
+  }

@@ -1,0 +1,431 @@
+/* General page layout */
+.trail-detail-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #c17f45;
+  color: #333;
+  font-family: 'Poppins', 'Montserrat', Arial, sans-serif;
+}
+
+.trail-detail-container {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Trail title styling */
+.trail-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin: 10px 0 30px;
+  color: #000000;
+  position: relative;
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.trail-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background-color: #3b5731;
+  border-radius: 3px;
+}
+
+/* Trail images */
+.trail-images-container {
+  margin-bottom: 40px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.trail-image-wrapper {
+  height: 400px;
+  width: 100%;
+}
+
+.trail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Trail info section */
+.trail-info-section {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+/* Stats styling - more like the footer modal */
+.trail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 30px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #eee;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  width: calc(33.333% - 20px);
+  min-width: 200px;
+  margin-bottom: 10px;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  background-color: #3b5731;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-right: 15px;
+  box-shadow: 0 5px 10px rgba(59, 87, 49, 0.2);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  margin: 0 0 5px 0;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: #2c3e50;
+}
+
+/* Difficulty colors */
+.easy {
+  color: #2ecc71;
+}
+
+.moderate {
+  color: #f39c12;
+}
+
+.difficult {
+  color: #e74c3c;
+}
+
+/* Content section */
+.content-section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px;
+  gap: 30px;
+}
+
+.description-section, 
+.map-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+  position: relative;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 60px;
+  height: 2px;
+  background-color: #3b5731;
+}
+
+/* Description text */
+.description-section p {
+  line-height: 1.7;
+  color: #34495e;
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Map container - styled like the footer modal */
+/* Update the map container styles */
+
+/* Update these map container styles to ensure proper display */
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  margin-bottom: 20px;
+}
+
+.google-map {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+}
+
+/* Loading indicator */
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 5;
+  font-weight: 600;
+  color: #3b5731;
+}
+
+.map-loading:before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3b5731;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error state */
+.map-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 5;
+  text-align: center;
+}
+
+.map-error p:first-child {
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.fallback-map-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+.fallback-map-container p {
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.view-on-maps-button {
+  display: inline-block;
+  background-color: #3b5731;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 15px 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(59, 87, 49, 0.2);
+}
+
+.view-on-maps-button:hover {
+  background-color: #2d4425;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(59, 87, 49, 0.3);
+}
+
+.coordinates-display {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.coordinates-display p {
+  margin: 0;
+  font-family: monospace;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Override any problematic CSS with !important */
+.activities-button-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 20px !important;
+  margin: 40px auto !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  position: static !important; /* Change to static */
+  flex-wrap: wrap !important;
+  float: none !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  clear: both !important;
+}
+
+.activities-button, 
+.back-button {
+  position: static !important; /* Ensure buttons are not positioned absolutely */
+  float: none !important;
+  display: inline-block !important;
+  padding: 12px 30px !important;
+  border: none !important;
+  border-radius: 50px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  min-width: 180px !important;
+  text-align: center !important;
+  margin: 0 !important;
+  z-index: 5 !important;
+}
+
+/* Apply specific styles for each button */
+.activities-button {
+  background-color: #3b5731 !important;
+  color: white !important;
+}
+
+.back-button {
+  background-color: #e0e0e0 !important;
+  color: #333 !important;
+}
+
+.activities-button:hover {
+  background-color: #2d4425;
+  transform: translateY(-2px);
+}
+
+
+
+.back-button:hover {
+  background-color: #d0d0d0;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .activities-button-container {
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px auto;
+  }
+  
+  .activities-button, 
+  .back-button {
+    width: 100%;
+    min-width: unset; /* Allow full width on mobile */
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .trail-stats {
+    padding: 20px;
+  }
+  
+  .stat-item {
+    width: calc(50% - 15px);
+  }
+}
+
+@media (max-width: 768px) {
+  .trail-title {
+    font-size: 28px;
+  }
+  
+  .trail-image-wrapper {
+    height: 300px;
+  }
+  
+  .content-section {
+    flex-direction: column;
+  }
+  
+  .description-section {
+    order: 1;
+  }
+  
+  .map-section {
+    order: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .trail-title {
+    font-size: 24px;
+  }
+  
+  .stat-item {
+    width: 100%;
+  }
+  
+  .activities-button-container {
+    flex-direction: column;
+  }
+  
+  .activities-button, 
+  .back-button {
+    width: 100%;
+  }
+}
