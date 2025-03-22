@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faClock, 
@@ -20,19 +20,19 @@ import '../../assets/styles/actInfo.css';
 const ActivityInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { activityId } = useParams(); 
   const [activityData, setActivityData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   
-  // Check user authentication and role
   useEffect(() => {
     const auth = getAuth();
     const checkUserRole = async () => {
       if (auth.currentUser) {
         setCurrentUser(auth.currentUser);
         
-        // Get user role from Firestore
         try {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
@@ -48,29 +48,78 @@ const ActivityInfo = () => {
     checkUserRole();
   }, []);
   
-  // Simulated loading for smoother transition
   useEffect(() => {
-    if (location.state) {
-      // Short timeout to show smooth transition even if data is available immediately
-      const timer = setTimeout(() => {
-        setActivityData(location.state);
-        setLoading(false);
-      }, 300);
+    const fetchActivityData = async () => {
+      setLoading(true);
       
-      return () => clearTimeout(timer);
-    } else {
-      setLoading(false);
-    }
-  }, [location.state]);
+      try {
+        if (location.state && location.state.title) {
+          console.log("Using activity data from location state:", location.state);
+          setActivityData(location.state);
+        } 
+        else if (activityId) {
+          console.log("Fetching activity data for ID:", activityId);
+          const db = getFirestore();
+          const activityRef = doc(db, "activities", activityId);
+          const activitySnapshot = await getDoc(activityRef);
+          
+          if (activitySnapshot.exists()) {
+            const data = {
+              id: activitySnapshot.id,
+              ...activitySnapshot.data()
+            };
+            
+            console.log("Activity data loaded from Firestore:", data);
+            
+            if (data.guideId && (!data.guideName || !data.guideImage)) {
+              try {
+                console.log("Fetching guide info for ID:", data.guideId);
+                const guideRef = doc(db, "users", data.guideId);
+                const guideSnapshot = await getDoc(guideRef);
+                
+                if (guideSnapshot.exists()) {
+                  const guideData = guideSnapshot.data();
+                  data.guideName = guideData.name || guideData.displayName || "Guía";
+                  data.guideImage = guideData.profilePic || "";
+                  console.log("Added guide data:", { guideName: data.guideName });
+                } else {
+                  console.log("Guide not found, using default values");
+                  data.guideName = "Guía (no encontrado)";
+                }
+              } catch (guideErr) {
+                console.error("Error fetching guide data:", guideErr);
+                data.guideName = "Guía";  
+              }
+            }
+            
+            setActivityData(data);
+          } else {
+            console.error("No activity found with ID:", activityId);
+            setError("No se encontró la actividad especificada");
+          }
+        } else {
+          setError("No se especificó una actividad");
+        }
+      } catch (err) {
+        console.error("Error fetching activity data:", err);
+        setError(`Error al cargar la información: ${err.message}`);
+      } finally {
+        // Short delay to ensure smooth transition
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
+      }
+    };
+    
+    fetchActivityData();
+  }, [location.state, activityId]);
   
-  // Improved star rating display function
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const totalStars = 5;
     
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <FontAwesomeIcon 
@@ -81,7 +130,6 @@ const ActivityInfo = () => {
       );
     }
     
-    // Add half star if needed - fixed implementation
     if (hasHalfStar) {
       stars.push(
         <span key="half-star" className="star-half-container">
@@ -91,7 +139,6 @@ const ActivityInfo = () => {
       );
     }
     
-    // Add empty stars to make 5 total
     const emptyStarsCount = totalStars - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStarsCount; i++) {
       stars.push(
@@ -106,21 +153,16 @@ const ActivityInfo = () => {
     return stars;
   };
   
-  // Handle return to activities list
   const handleBack = () => {
-    navigate(-1); // Retrocede a la página anterior
+    navigate(-1); 
   };
 
-  // Get activity icon based on type
   const getActivityTypeIcon = (type) => {
-    // You can expand this with more icons for different activity types
     return faHiking; // Default icon
   };
   
-  // Handle reservation button click
   const handleReservation = () => {
     if (!currentUser) {
-      // Redirect to login if not logged in
       navigate('/login', { 
         state: { 
           from: location.pathname,
@@ -131,12 +173,10 @@ const ActivityInfo = () => {
     }
     
     if (userRole !== 'estudiante') {
-      // If user is not a student, show an alert
       alert('Solo los estudiantes pueden reservar actividades');
       return;
     }
     
-    // Navigate to payment page with activity data
     navigate('/payment', { state: activityData });
   };
 
@@ -165,6 +205,18 @@ const ActivityInfo = () => {
             <div className="loading-spinner"></div>
             <p>Cargando información...</p>
           </div>
+        ) : error ? (
+          <div className="error-container">
+            <div className="error-icon">!</div>
+            <h2>Información no disponible</h2>
+            <p>{error}</p>
+            <button 
+              onClick={() => navigate('/routes')}
+              className="return-button"
+            >
+              Explorar rutas disponibles
+            </button>
+          </div>
         ) : !activityData ? (
           <div className="error-container">
             <div className="error-icon">!</div>
@@ -187,7 +239,7 @@ const ActivityInfo = () => {
                     <span>{activityData.type || 'Actividad'}</span>
                   </div>
                   <img 
-                    src={activityData.imageSrc} 
+                    src={activityData.imageSrc || hikingImage} 
                     alt={activityData.title} 
                     className="activity-image"
                   />
@@ -211,8 +263,8 @@ const ActivityInfo = () => {
                       <div className="rating-display">
                         <span className="meta-label">Calificación</span>
                         <div className="stars-container">
-                          {renderStars(activityData.rating)}
-                          <span className="rating-value">{activityData.rating.toFixed(1)}</span>
+                          {renderStars(activityData.rating || 0)}
+                          <span className="rating-value">{(activityData.rating || 0).toFixed(1)}</span>
                         </div>
                       </div>
                     </div>

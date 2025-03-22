@@ -20,19 +20,11 @@ import ActCard from '../components/ActGuideCard.jsx';
 import '../../assets/styles/actDash.css';
 
 // Import activity images
-import hikingImage from '../../assets/images/logo.png';
-import campingImage from '../../assets/images/logo.png';
-import yogaImage from '../../assets/images/logo.png';
-import birdwatchingImage from '../../assets/images/logo.png';
-import photographyImage from '../../assets/images/logo.png';
+import hikingImage from '../../assets/images/Hiking1.jpg';
 
 // Activity type to image mapping
 const activityImages = {
-  'Hiking': hikingImage,
-  'Camping': campingImage,
-  'Yoga': yogaImage,
-  'Birdwatching': birdwatchingImage,
-  'Photography': photographyImage,
+  'Senderismo': hikingImage,
   'default': hikingImage // Default image
 };
 
@@ -76,7 +68,7 @@ const ActDash = () => {
       console.error("No hay usuario autenticado");
       return;
     }
-    const guideName = currentUser.uid;
+    const guideId = currentUser.uid;
     let newDateTimestamp = null;
     if (newActivityData.date) {
       const dateString = newActivityData.time 
@@ -89,7 +81,7 @@ const ActDash = () => {
       title: newActivityData.title,
       description: newActivityData.description,
       type: newActivityData.type,
-      guideName: guideName,
+      guideId: guideId,
       rating: 0,
       price: newActivityData.price ? Number(newActivityData.price) : 0,
       capacity: newActivityData.capacity || 'No especificada',
@@ -175,8 +167,8 @@ const ActDash = () => {
   
         const activitiesCollection = collection(db, 'activities');
         const activitiesQuery = isAdmin
-          ? query(activitiesCollection)
-          : query(activitiesCollection, where("guideName", "==", currentUser.uid));
+          ? query(activitiesCollection, where("type", "==", "Senderismo"))
+          : query(activitiesCollection, where("guideId", "==", currentUser.uid), where("type", "==", "Senderismo"));
   
         const activitiesSnapshot = await getDocs(activitiesQuery);
   
@@ -187,20 +179,20 @@ const ActDash = () => {
           const activitiesData = await Promise.all(
             activitiesSnapshot.docs.map(async (docSnap) => {
               const data = docSnap.data();
-              const type = data.type || 'Hiking';
+              const type = data.type || 'Senderismo';
               const imageSrc = activityImages[type] || activityImages['default'];
               let guideRealName = "Guía no asignado";
               try {
-                const userDocRef = doc(db, 'users', data.guideName);
+                const userDocRef = doc(db, 'users', data.guideId);
                 const userDocSnap = await getDoc(userDocRef);
                 if (userDocSnap.exists()) {
                   const userData = userDocSnap.data();
                   guideRealName = userData.name || guideRealName;
                 } else {
-                  console.log(`No se encontró usuario para el guide uid ${data.guideName}`);
+                  console.log(`No se encontró usuario para el guide uid ${data.guideId}`);
                 }
               } catch (error) {
-                console.error(`Error fetching guide data for uid ${data.guideName}:`, error);
+                console.error(`Error fetching guide data for uid ${data.guideId}:`, error);
               }
               console.log(`Activity ${docSnap.id} guideRealName:`, guideRealName);
               
@@ -455,12 +447,18 @@ const ActDash = () => {
             </label>
             <label>
               Tipo:
-              <input 
-                type="text" 
+              <select 
                 name="type" 
                 value={newActivityData.type} 
-                onChange={handleCreateModalChange} 
-              />
+                onChange={handleCreateModalChange}
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="Senderismo">Senderismo</option>
+                <option value="Cámping">Cámping</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Observación de aves">Observación de aves</option>
+                <option value="Fotografía">Fotografía</option>
+              </select>
             </label>
             <label>
               Capacidad:

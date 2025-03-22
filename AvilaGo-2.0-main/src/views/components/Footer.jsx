@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import '../../assets/styles/footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -91,7 +92,7 @@ function Footer() {
         <div className="footer-links">
           <a href="#" onClick={openContactModal}>Contact us</a>
           <a href="#" onClick={handleFAQClick}>FAQ</a>
-          <a href="#" onClick={handleAboutUsClick}>About us</a>
+          <Link to="/aboutUs">About us</Link>
         </div>
 
         <div className="footer-developed">
@@ -108,7 +109,7 @@ function Footer() {
             </div>
             <div className="developer-column">
               <p>Gustavo Velazquez</p>
-            </div> {/* Missing closing div */}
+            </div>
           </div>
         </div>
 
