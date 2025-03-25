@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
-import '../../assets/styles/aboutUs.css';
+import '../../assets/styles/AboutUs.css';
 import unimetImage from '../../assets/images/unimet.png';
 
 const AboutUs = () => {
